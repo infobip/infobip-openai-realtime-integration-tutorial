@@ -289,15 +289,6 @@ const OPENAI_API_KEY = ""; // Your OpenAI API KEY
 const server = http.createServer();
 const wss = new ws.WebSocketServer({server})
 
-function sendAudioToInfobip(ws, buff) {
-    const expectedBytes = 960; // sample_rate * packetization_time * bytes_per_sample = 960 [bytes]
-    const chunks = buff.length / expectedBytes;
-    for (let i = 0; i < chunks; ++i) {
-        const chunk = buff.subarray(i * expectedBytes, Math.min((i + 1) * expectedBytes, buff.length));
-        ws.send(chunk);
-    }
-}
-
 async function handleWebsocket(infobipWs) {
     let openAiWs = null;
 
@@ -340,7 +331,7 @@ async function handleWebsocket(infobipWs) {
                             break;
                         case "response.audio.delta":
                             const buff = Buffer.from(message.delta, "base64");
-                            sendAudioToInfobip(infobipWs, buff);
+                            infobipWs.send(buff);
                             break;
                         case "session.created":
                             console.log("Session created!");
