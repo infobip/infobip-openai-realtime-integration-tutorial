@@ -13,8 +13,15 @@ async function handleWebsocket(infobipWs) {
 
     const setupOpenAI = async () => {
         try {
-            openAiWs = new ws.WebSocket("wss://api.openai.com/v1/realtime?model=gpt-4o",
-                ["Authorization", `Bearer ${OPENAI_API_KEY}`, "OpenAI-Beta", "realtime=v1"]
+            openAiWs = new ws.WebSocket(
+                "wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-12-17",
+                null,
+                {
+                    headers: {
+                        Authorization: `Bearer ${OPENAI_API_KEY}`,
+                        "OpenAI-Beta": "realtime=v1",
+                    },
+                }
             );
 
             openAiWs.on("open", () => {
